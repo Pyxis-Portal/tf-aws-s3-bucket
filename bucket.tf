@@ -147,6 +147,7 @@ resource "aws_s3_bucket_notification" "bucket_notification" {
       filter_suffix       = lambda_function.value["filter_suffix"]
     }
   }
+  
   depends_on = [
     aws_lambda_permission.lambda_allow_bucket_notification
   ]

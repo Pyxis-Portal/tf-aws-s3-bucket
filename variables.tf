@@ -59,13 +59,13 @@ variable "create_s3_object" {
 
 variable "s3_object_key" {
   type        = string
-  default     = ""
+  default     = "java-basic-1.0"
   description = "Name of the object once it is in the bucket."
 }
 
 variable "s3_object_source" {
   type        = string
-  default     = ""
+  default     = "java-basic-1.0.jar"
   description = "Path to a file that will be read and uploaded as raw bytes for the object content."
 }
 

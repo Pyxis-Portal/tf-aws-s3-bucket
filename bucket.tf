@@ -15,7 +15,7 @@ data "aws_iam_policy_document" "bucket_policy" {
 
 module "s3_bucket" {
   source        = "terraform-aws-modules/s3-bucket/aws"
-  version       = "1.16.0"
+  version       = "2.10.0"
   bucket        = var.s3_bucket_name
   acl           = "private"
   force_destroy = var.s3_bucket_force_deletion

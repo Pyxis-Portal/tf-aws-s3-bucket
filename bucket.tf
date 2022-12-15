@@ -16,6 +16,7 @@ data "aws_iam_policy_document" "bucket_policy" {
 }
 
 module "s3_bucket" {
+  count = var.create_s3 ? 1 : 0
   source         = "terraform-aws-modules/s3-bucket/aws"
   version        = "2.10.0"
   bucket         = var.s3_bucket_name
@@ -49,26 +50,35 @@ module "s3_bucket" {
   restrict_public_buckets = true
 }
 
-resource "aws_s3_bucket_object" "this" {
+resource "aws_s3_bucket_object" "default_obj" {
   count  = var.create_s3_object ? 1 : 0
-  bucket = module.s3_bucket.s3_bucket_id
+  bucket = var.bucket_id == "" ? module.s3_bucket.s3_bucket_id : var.bucket_id
   key    = var.s3_object_key
   source = var.s3_object_source
   etag   = filemd5(var.s3_object_source)
 }
 
+
+resource "aws_s3_bucket_object" "dynamic_obj" {
+  for_each  = var.create_s3_dynamic_object ?  var.multiple_uploan_files : {}
+  bucket = var.bucket_id == "" ? module.s3_bucket.s3_bucket_id : var.bucket_id
+  key    = each.key
+  source = each.value
+  etag   = filemd5(each.value)
+}
+
 resource "aws_lambda_permission" "lambda_allow_bucket_notification" {
-  count         = length(var.s3_trigger_lambdas_list)
+  count         = length(var.s3_trigger_lambdas_list)  > 0 ? 1 : 0
   statement_id  = "AllowExecutionFromS3Bucket"
   action        = "lambda:InvokeFunction"
   function_name = var.s3_trigger_lambdas_list[count.index]["lambda_function_arn"]
   principal     = "s3.amazonaws.com"
-  source_arn    = module.s3_bucket.s3_bucket_arn
+  source_arn    = var.create_s3 ? module.s3_bucket.s3_bucket_arn : null 
 }
 
 resource "aws_s3_bucket_notification" "bucket_notification" {
   count  = length(var.s3_trigger_lambdas_list) > 0 ? 1 : 0
-  bucket = module.s3_bucket.s3_bucket_id
+  bucket = var.create_s3 ? module.s3_bucket.s3_bucket_id : null  
 
   dynamic "lambda_function" {
     for_each = var.s3_trigger_lambdas_list

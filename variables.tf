@@ -50,3 +50,22 @@ variable "sse_algorithm" {
   default     = "AES256"
   description = "AES256 or aws:kms"
 }
+
+variable "create_s3_object" {
+  type        = bool
+  default     = false
+  description = "this create reource s3 object"
+}
+
+variable "s3_object_key" {
+  type        = string
+  default     = ""
+  description = "Name of the object once it is in the bucket."
+}
+
+variable "s3_object_source" {
+  type        = string
+  default     = ""
+  description = "Path to a file that will be read and uploaded as raw bytes for the object content."
+}
+

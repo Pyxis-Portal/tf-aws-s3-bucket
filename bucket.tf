@@ -115,6 +115,13 @@ module "s3_bucket" {
   //  ]
 }
 
+resource "aws_s3_bucket_object" "this" {
+  count  = var.create_s3_object ? 1 : 0
+  bucket = module.s3_bucket.s3_bucket_id
+  key    = var.s3_object_key
+  source = var.s3_object_source
+  etag   = filemd5(var.s3_object_source)
+}
 
 resource "aws_lambda_permission" "lambda_allow_bucket_notification" {
   count         = length(var.s3_trigger_lambdas_list)

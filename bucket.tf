@@ -16,13 +16,14 @@ data "aws_iam_policy_document" "bucket_policy" {
 }
 
 module "s3_bucket" {
-  source        = "terraform-aws-modules/s3-bucket/aws"
-  version       = "2.10.0"
-  bucket        = var.s3_bucket_name
-  acl           = "private"
-  force_destroy = var.s3_bucket_force_deletion
-  attach_policy = var.create_policy
-  policy        = var.create_policy ? element(data.aws_iam_policy_document.bucket_policy.*.json, 0) : null
+  source         = "terraform-aws-modules/s3-bucket/aws"
+  version        = "2.10.0"
+  bucket         = var.s3_bucket_name
+  acl            = "private"
+  force_destroy  = var.s3_bucket_force_deletion
+  attach_policy  = var.create_policy
+  policy         = var.create_policy ? element(data.aws_iam_policy_document.bucket_policy.*.json, 0) : null
+  lifecycle_rule = var.lifecycle_rule
 
   tags = {
     Name        = var.s3_bucket_name
@@ -46,75 +47,6 @@ module "s3_bucket" {
   block_public_policy     = true
   ignore_public_acls      = true
   restrict_public_buckets = true
-  //  object_lock_configuration = {
-  //    object_lock_enabled = "Enabled"
-  //    rule = {
-  //      default_retention = {
-  //        mode  = "COMPLIANCE"
-  //        years = 5
-  //      }
-  //    }
-  //  }
-  //  logging = {
-  //    target_bucket = module.log_bucket.this_s3_bucket_id
-  //    target_prefix = "log/"
-  //  }
-
-  //  lifecycle_rule = [
-  //    {
-  //      id      = "log"
-  //      enabled = true
-  //      prefix  = "log/"
-  //
-  //      tags = {
-  //        rule      = "log"
-  //        autoclean = "true"
-  //      }
-  //
-  //      transition = [
-  //        {
-  //          days          = 30
-  //          storage_class = "ONEZONE_IA"
-  //        }, {
-  //          days          = 60
-  //          storage_class = "GLACIER"
-  //        }
-  //      ]
-  //
-  //      expiration = {
-  //        days = 90
-  //      }
-  //
-  //      noncurrent_version_expiration = {
-  //        days = 30
-  //      }
-  //    },
-  //    {
-  //      id                                     = "log1"
-  //      enabled                                = true
-  //      prefix                                 = "log1/"
-  //      abort_incomplete_multipart_upload_days = 7
-  //
-  //      noncurrent_version_transition = [
-  //        {
-  //          days          = 30
-  //          storage_class = "STANDARD_IA"
-  //        },
-  //        {
-  //          days          = 60
-  //          storage_class = "ONEZONE_IA"
-  //        },
-  //        {
-  //          days          = 90
-  //          storage_class = "GLACIER"
-  //        },
-  //      ]
-  //
-  //      noncurrent_version_expiration = {
-  //        days = 300
-  //      }
-  //    },
-  //  ]
 }
 
 resource "aws_s3_bucket_object" "this" {

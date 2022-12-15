@@ -74,3 +74,9 @@ variable "create_policy" {
   default     = false
   description = ""
 }
+
+variable lifecycle_rule {
+  type        = any
+  default     = []
+  description = "all configiration for life cyle rule"
+}

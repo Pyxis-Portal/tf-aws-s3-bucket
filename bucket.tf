@@ -129,12 +129,12 @@ resource "aws_lambda_permission" "lambda_allow_bucket_notification" {
   action        = "lambda:InvokeFunction"
   function_name = var.s3_trigger_lambdas_list[count.index]["lambda_function_arn"]
   principal     = "s3.amazonaws.com"
-  source_arn    = module.s3_bucket.this_s3_bucket_arn
+  source_arn    = module.s3_bucket.s3_bucket_arn
 }
 
 resource "aws_s3_bucket_notification" "bucket_notification" {
   count  = length(var.s3_trigger_lambdas_list) > 0 ? 1 : 0
-  bucket = module.s3_bucket.this_s3_bucket_id
+  bucket = module.s3_bucket.s3_bucket_id
 
   dynamic "lambda_function" {
     for_each = var.s3_trigger_lambdas_list
@@ -147,7 +147,7 @@ resource "aws_s3_bucket_notification" "bucket_notification" {
       filter_suffix       = lambda_function.value["filter_suffix"]
     }
   }
-  
+
   depends_on = [
     aws_lambda_permission.lambda_allow_bucket_notification
   ]

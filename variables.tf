@@ -24,7 +24,7 @@ variable "s3_access_policy" {
     {
       principals = []
       actions    = []
-      resources   = []
+      resources  = []
     },
   ]
 }
@@ -69,3 +69,8 @@ variable "s3_object_source" {
   description = "Path to a file that will be read and uploaded as raw bytes for the object content."
 }
 
+variable "create_policy" {
+  type        = bool
+  default     = false
+  description = ""
+}

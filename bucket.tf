@@ -1,4 +1,6 @@
 data "aws_iam_policy_document" "bucket_policy" {
+  count = var.create_policy ? 1 : 0
+
   dynamic "statement" {
     for_each = var.s3_access_policy
 
@@ -19,8 +21,8 @@ module "s3_bucket" {
   bucket        = var.s3_bucket_name
   acl           = "private"
   force_destroy = var.s3_bucket_force_deletion
-  attach_policy = true
-  policy        = data.aws_iam_policy_document.bucket_policy.json
+  attach_policy = var.create_policy
+  policy        = var.create_policy ? element(data.aws_iam_policy_document.bucket_policy.*.json, 0) : null
 
   tags = {
     Name        = var.s3_bucket_name

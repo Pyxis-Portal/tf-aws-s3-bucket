@@ -24,7 +24,7 @@ variable "s3_access_policy" {
     {
       principals = []
       actions    = []
-      resouces   = []
+      resources   = []
     },
   ]
 }
